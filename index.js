@@ -1,6 +1,8 @@
 require("dotenv").config();
 
-const { Client, Events, GatewayIntentBits, EmbedBuilder } = require("discord.js");
+const { Client, Events, GatewayIntentBits } = require("discord.js");
+const { sendError, sendSuccess } = require("./helpers/embeds")
+
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds,
@@ -10,15 +12,16 @@ const client = new Client({
 });
 
 const eventLogChannelId = process.env.CHANNEL_ID;
+const mentionRegex = /^<@!?(\d+)>(?:\s*<@!?(\d+)>)*$/;
 
 const formatFields = {
-    "event": { optional: false },
-    "host": { optional: false },
-    "co-host": { optional: true },
-    "attendees": { optional: false },
-    "notes": { optional: true },
-    "evidence": { optional: true },
-    "ping": { optional: false }
+    "event":        { optional: false, mentionsOnly: false },
+    "host":         { optional: false, mentionsOnly: true },
+    "co-host":      { optional: true, mentionsOnly: true },
+    "attendees":    { optional: false, mentionsOnly: true },
+    "notes":        { optional: true, mentionsOnly: false },
+    "evidence":     { optional: true, mentionsOnly: false },
+    "ping":         { optional: false, mentionsOnly: true }
 };
 
 client.once(Events.ClientReady, readyClient => {
@@ -37,13 +40,24 @@ client.on(Events.MessageCreate, message => {
     for (const line of lines) {
         let [rawKey, ...value] = line.split(":");
         let key = rawKey?.trim().toLowerCase();
+        let info = value.join(":").trim();
 
-        if (!key || !(key in formatFields)) {
-            continue;
-        } else {
-            let info = value.join(":").trim();
-            data[key] = info;
-        }
+        let field = formatFields[key];
+        if (!field) continue;
+
+        if (field.optional && !info) continue;
+
+        // Sanitize input
+        if (formatFields[key].mentionsOnly === true) {
+            if (formatFields[key].optional && (!info || info.trim() === "")) continue;
+
+            if (!mentionRegex.test(info)) {
+                sendError(message, `Invalid ${key} input`, `You must include valid mentions under **${key}**`);
+                return;
+            }
+        }   
+        
+        data[key] = info;
     }
 
     // Check for missing fields
@@ -58,22 +72,12 @@ client.on(Events.MessageCreate, message => {
     }
 
     if (missingFields.length > 0) {
-        let embed = new EmbedBuilder()
-            .setColor([255,0,0])
-            .setTitle("Missing fields")
-            .setDescription(`${missingFields.join(", ")}`)
-
-        message.reply({ embeds: [embed] });
+        sendError(message, "Missing fields", `${missingFields.join(", ")}`)
         return;
     }
 
     // Store data
-    let embed = new EmbedBuilder()
-        .setColor([0,255,0])
-        .setDescription(":clipboard: Event successfully logged.")
-        .setTimestamp();
-
-    message.reply({ embeds: [embed] });
+    sendSuccess(message, ":clipboard: Event successfully logged.")
 })
 
 client.login(process.env.BOT_TOKEN);
