@@ -1,8 +1,7 @@
-require("dotenv").config();
-
 const { Client, Events, GatewayIntentBits } = require("discord.js");
-const { sendError, sendSuccess } = require("./helpers/embeds")
-
+const formatFields = require("./configs/fields");
+const { eventLogChannelId, mentionRegex } = require("./configs/constants");
+const { sendError, sendSuccess } = require("./helpers/embeds");
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds,
@@ -10,19 +9,6 @@ const client = new Client({
         GatewayIntentBits.MessageContent
     ] 
 });
-
-const eventLogChannelId = process.env.CHANNEL_ID;
-const mentionRegex = /^<@!?(\d+)>(?:\s*<@!?(\d+)>)*$/;
-
-const formatFields = {
-    "event":        { optional: false, mentionsOnly: false },
-    "host":         { optional: false, mentionsOnly: true },
-    "co-host":      { optional: true, mentionsOnly: true },
-    "attendees":    { optional: false, mentionsOnly: true },
-    "notes":        { optional: true, mentionsOnly: false },
-    "evidence":     { optional: true, mentionsOnly: false },
-    "ping":         { optional: false, mentionsOnly: true }
-};
 
 client.once(Events.ClientReady, readyClient => {
     console.log(`Client online, logged in as ${readyClient.user.tag}`);
