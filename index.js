@@ -1,7 +1,10 @@
 const { Client, Events, GatewayIntentBits } = require("discord.js");
 const formatFields = require("./configs/fields");
-const { eventLogChannelId, mentionRegex } = require("./configs/constants");
+const { botToken, mongoURI, eventLogChannelId, mentionRegex } = require("./configs/constants");
 const { sendError, sendSuccess } = require("./helpers/embeds");
+const { updateUsers } = require("./helpers/logs");
+
+const Mongoose = require("mongoose");
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds,
@@ -10,10 +13,6 @@ const client = new Client({
     ] 
 });
 
-client.once(Events.ClientReady, readyClient => {
-    console.log(`Client online, logged in as ${readyClient.user.tag}`);
-})
-
 client.on(Events.MessageCreate, message => {
     if (message.author.bot) return;
     if (message.channel.id !== eventLogChannelId) return;
@@ -21,7 +20,7 @@ client.on(Events.MessageCreate, message => {
 
     let content = message.content.trim();
     let lines = content.split("\n");
-    let data = {};
+    let rawData = {};
 
     for (const line of lines) {
         let [rawKey, ...value] = line.split(":");
@@ -43,14 +42,14 @@ client.on(Events.MessageCreate, message => {
             }
         }   
         
-        data[key] = info;
+        rawData[key] = info;
     }
 
     // Check for missing fields
     let missingFields = [];
     for (const field in formatFields) {
         let optionalField = formatFields[field].optional;
-        let value = data[field];
+        let value = rawData[field];
 
         if (!optionalField && (!value || value.trim() === "")) {
             missingFields.push("`" + field + "`");
@@ -63,7 +62,22 @@ client.on(Events.MessageCreate, message => {
     }
 
     // Store data
-    sendSuccess(message, ":clipboard: Event successfully logged.")
+    updateUsers(rawData);
 })
 
-client.login(process.env.BOT_TOKEN);
+async function start() {
+    try {
+        await Mongoose.connect(mongoURI, {
+            dbName: "EventLogs"
+        });
+        console.log("Connected to MongoDB");
+
+        await client.login(botToken);
+        console.log(`Logged in as ${client.user.tag}`);
+    } catch(err) {
+        console.error("Failed to start:", err)
+        process.exit(1);
+    }
+}
+
+start();
