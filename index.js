@@ -1,10 +1,13 @@
-const { Client, Events, GatewayIntentBits } = require("discord.js");
-const formatFields = require("./configs/fields");
+const { Client, Events, GatewayIntentBits, Collection } = require("discord.js");
 const { botToken, mongoURI, eventLogChannelId, mentionRegex } = require("./configs/constants");
 const { sendError, sendSuccess } = require("./helpers/embeds");
 const { updateUsers } = require("./helpers/logs");
 
 const Mongoose = require("mongoose");
+const FS = require("node:fs");
+const PATH = require("node:path");
+const formatFields = require("./configs/fields");
+
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds,
@@ -12,6 +15,15 @@ const client = new Client({
         GatewayIntentBits.MessageContent
     ] 
 });
+
+client.commands = new Collection();
+const commandsPath = PATH.join(__dirname, "commands");
+const commandsFiles = FS.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
+
+for (const file of commandsFiles) {
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.data.name, command);
+}
 
 client.on(Events.MessageCreate, message => {
     if (message.author.bot) return;
@@ -57,18 +69,40 @@ client.on(Events.MessageCreate, message => {
     }
 
     if (missingFields.length > 0) {
+        console.log("Missing field!");
         sendError(message, "Missing fields", `${missingFields.join(", ")}`)
         return;
     }
 
     // Store data
-    updateUsers(rawData);
-})
+    updateUsers(rawData)
+        .then(() => {
+            sendSuccess(message, ":clipboard: User data logged successfully");
+        })
+        .catch((error) => {
+            console.error("updateUsers() failed:", error);
+            sendError(message, "Error!", "There was a problem with updating user data");
+        })
+});
+
+client.on(Events.InteractionCreate, async interaction => {
+    if (!interaction.isChatInputCommand()) return;
+    
+    const command = client.commands.get(interaction.commandName);
+    if (!command) return;
+
+    try {
+        await command.execute(interaction);
+    } catch(err) {
+        console.error(err)
+        await interaction.reply({ content: "There was an error while executing this command", ephemeral: true });
+    }
+});
 
 async function start() {
     try {
         await Mongoose.connect(mongoURI, {
-            dbName: "EventLogs"
+            dbName: "WeeklyDB"
         });
         console.log("Connected to MongoDB");
 

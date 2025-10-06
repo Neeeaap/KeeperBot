@@ -1,4 +1,6 @@
-const User = require("../models/User");
+const Mongoose = require("mongoose");
+const userSchema = require("../schemas/UserSchema");
+const User = Mongoose.model("User", userSchema)
 const { extractUserIds } = require("./utility");
 
 // Formats and stores user data
@@ -34,7 +36,7 @@ async function updateUsers(data) {
             }))
         ]);
     } catch(err) {
-        console.error("Failed to update data:", err);
+        throw err;
     }
 }
 

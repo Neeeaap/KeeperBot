@@ -7,5 +7,4 @@ const userSchema = new Mongoose.Schema({
     attended: { type: Number, default: 0 },
 }, { timestamps: true });
 
-userSchema.index({ hosted: -1, attended: -1 });
-module.exports = Mongoose.model("User", userSchema);
+module.exports = userSchema;
