@@ -6,6 +6,7 @@ const CRON = require("node-cron");
 const FS = require("node:fs");
 const PATH = require("node:path");
 const formatFields = require("./configs/fields");
+//import { formatFields } from "./configs/format";
 const important = require("./configs/constants");
 const LogsModule = require("./helpers/logs");
 const userSchema = require("./schemas/UserSchema");
@@ -73,7 +74,6 @@ client.on(Events.MessageCreate, message => {
     }
 
     if (missingFields.length > 0) {
-        console.log("Missing field!");
         sendError(message, "Missing fields", `${missingFields.join(", ")}`)
         return;
     }
@@ -103,7 +103,6 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 client.on(Events.GuildMemberUpdate, async(oldMember, newMember) => {
-    console.log("Detected");
     if (newMember.user.bot) return;
     
     const hadRole = oldMember.roles.cache.has(important.memberId);
