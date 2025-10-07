@@ -1,17 +1,21 @@
 const { Client, Events, GatewayIntentBits, Collection } = require("discord.js");
-const { botToken, mongoURI, eventLogChannelId, mentionRegex } = require("./configs/constants");
 const { sendError, sendSuccess } = require("./helpers/embeds");
-const { updateUsers } = require("./helpers/logs");
 
 const Mongoose = require("mongoose");
+const CRON = require("node-cron");
 const FS = require("node:fs");
 const PATH = require("node:path");
 const formatFields = require("./configs/fields");
+const important = require("./configs/constants");
+const LogsModule = require("./helpers/logs");
+const userSchema = require("./schemas/UserSchema");
 
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildPresences,
         GatewayIntentBits.MessageContent
     ] 
 });
@@ -27,7 +31,7 @@ for (const file of commandsFiles) {
 
 client.on(Events.MessageCreate, message => {
     if (message.author.bot) return;
-    if (message.channel.id !== eventLogChannelId) return;
+    if (message.channel.id !== important.eventLogChannelId) return;
     if (!message.content.toLowerCase().startsWith("event")) return;
 
     let content = message.content.trim();
@@ -48,7 +52,7 @@ client.on(Events.MessageCreate, message => {
         if (formatFields[key].mentionsOnly === true) {
             if (formatFields[key].optional && (!info || info.trim() === "")) continue;
 
-            if (!mentionRegex.test(info)) {
+            if (!important.mentionRegex.test(info)) {
                 sendError(message, `Invalid ${key} input`, `You must include valid mentions under **${key}**`);
                 return;
             }
@@ -75,13 +79,13 @@ client.on(Events.MessageCreate, message => {
     }
 
     // Store data
-    updateUsers(rawData)
+    LogsModule.updateWeeklyDB(rawData)
         .then(() => {
-            sendSuccess(message, ":clipboard: User data logged successfully");
+            sendSuccess(message, ":clipboard: Weekly data logged successfully");
         })
         .catch((error) => {
-            console.error("updateUsers() failed:", error);
-            sendError(message, "Error!", "There was a problem with updating user data");
+            console.error("updateWeeklyDB() failed:", error);
+            sendError(message, "Error!", "There was a problem with updating weekly data");
         })
 });
 
@@ -95,19 +99,95 @@ client.on(Events.InteractionCreate, async interaction => {
         await command.execute(interaction);
     } catch(err) {
         console.error(err)
-        await interaction.reply({ content: "There was an error while executing this command", ephemeral: true });
     }
 });
 
+client.on(Events.GuildMemberUpdate, async(oldMember, newMember) => {
+    console.log("Detected");
+    if (newMember.user.bot) return;
+    
+    const hadRole = oldMember.roles.cache.has(important.memberId);
+    const hasRole = newMember.roles.cache.has(important.memberId);
+
+    const AllTimeDB = Mongoose.connection.useDb("AllTimeDB");
+    const WeeklyDB = Mongoose.connection.useDb("WeeklyDB");
+    const WeeklyUser = WeeklyDB.model("User", userSchema);
+    const AllTimeUser = AllTimeDB.model("User", userSchema);
+
+    // New member
+    if (!hadRole && hasRole) {
+        console.log(`New member: ${newMember.user.tag} detected, issuing new document...`);
+        try {
+            await WeeklyUser.updateOne(
+                { _id: newMember.user.id },
+                { $setOnInsert: {
+                    hosted: 0,
+                    cohosted: 0,
+                    attended: 0,
+                    strikes: 0,
+                }},
+                { upsert: true }
+            );
+            console.log(`Created new document for ${newMember.user.tag} with Id: ${newMember.user.id}`);
+        } catch(err) {
+            console.error("An error occurred while creating document:", err);
+        }
+    } else if (hadRole && !hasRole) {
+        // Member left
+        console.log(`Member left: ${newMember.user.tag}, removing document from database...`);
+        try {
+            await Promise.all([
+                WeeklyUser.deleteOne({ _id: newMember.user.id }),
+                AllTimeUser.deleteOne({ _id: newMember.user.id })
+            ]);
+            console.log(`Removed member ${newMember.user.tag} from database with Id: ${newMember.user.id}`);
+        } catch(err) {
+            console.error("An error occurred while removing document:", err);
+        }
+    }
+});
+
+client.on(Events.GuildMemberRemove, async (member) => {
+    if (member.user.bot) return;
+
+    const AllTimeDB = Mongoose.connection.useDb("AllTimeDB");
+    const WeeklyDB = Mongoose.connection.useDb("WeeklyDB");
+    const WeeklyUser = WeeklyDB.model("User", userSchema);
+    const AllTimeUser = AllTimeDB.model("User", userSchema);
+
+    const isMember = member.roles.cache.has(important.memberId);
+    if (isMember) {
+        console.log(`Member ${member.user.tag} left the server, removing document from database...`)
+        try {
+            await Promise.all([
+                WeeklyUser.deleteOne({ _id: member.user.id }),
+                AllTimeUser.deleteOne({ _id: member.user.id })
+            ]);
+            console.log(`Removed member ${member.user.tag} from database with Id: ${member.user.id}`);
+        } catch(err) {
+            console.error("An error occurred while removing document:", err);
+        }
+    }
+})
+
+// Weekly quota reset
+CRON.schedule("0 0 * * 0", async() => {
+    try {
+        await require("./helpers/reset").quotaReset(client);
+        console.log("Weekly reset successful");
+    } catch(err) {
+        console.log("An error occured while resetting quota:", err);
+    }
+})
+
 async function start() {
     try {
-        await Mongoose.connect(mongoURI, {
-            dbName: "WeeklyDB"
-        });
+        await Mongoose.connect(important.mongoURI);
         console.log("Connected to MongoDB");
 
-        await client.login(botToken);
+        await client.login(important.botToken);
         console.log(`Logged in as ${client.user.tag}`);
+        //require("./weeklyCheckTest").testReset(client);
     } catch(err) {
         console.error("Failed to start:", err)
         process.exit(1);

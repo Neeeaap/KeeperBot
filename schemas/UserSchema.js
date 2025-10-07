@@ -5,6 +5,7 @@ const userSchema = new Mongoose.Schema({
     hosted: { type: Number, default: 0 },
     cohosted: { type: Number, default: 0 },
     attended: { type: Number, default: 0 },
+    strikes: { type: Number, default: 0 }
 }, { timestamps: true });
 
 module.exports = userSchema;
