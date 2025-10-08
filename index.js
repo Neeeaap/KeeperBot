@@ -6,7 +6,6 @@ const CRON = require("node-cron");
 const FS = require("node:fs");
 const PATH = require("node:path");
 const formatFields = require("./configs/fields");
-//import { formatFields } from "./configs/format";
 const important = require("./configs/constants");
 const LogsModule = require("./helpers/logs");
 const userSchema = require("./schemas/UserSchema");
