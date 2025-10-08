@@ -87,7 +87,10 @@ async function quotaReset(client) {
                 .setDescription(failedList)
                 .setTimestamp();
 
-            await reportChannel.send({ embeds: [embed] });
+            await reportChannel.send({
+                content: `<@&1319685026446704732> <@&1319685397697007677> <@&1364068742077743284>`,
+                embeds: [embed] 
+            });
             console.log(`[WEEKLY CHECK]: ${failedQuota.length} members did not meet quota`);
         } else {
             const embed = new EmbedBuilder()
@@ -96,7 +99,10 @@ async function quotaReset(client) {
                 .setDescription("Everyone completed their quota!")
                 .setTimestamp();
 
-            await reportChannel.send({ embeds: [embed] });
+            await reportChannel.send({
+                content: `<@&1319685026446704732> <@&1319685397697007677> <@&1364068742077743284>`,
+                embeds: [embed] 
+            });
             console.log("[WEEKLY CHECK]: All members met their quota this week!");
         }
 
