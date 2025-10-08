@@ -10,5 +10,5 @@ module.exports = {
     clientId: process.env.CLIENT_ID,
     memberId: process.env.MEMBER_ID,
     guildId: process.env.GUILD_ID,
-    mentionRegex: /^<@!?(\d+)>(?:\s*<@!?(\d+)>)*$/
+    mentionRegex: /^<@!?(\d+)>$|^<@&(\d+)>$/
 };

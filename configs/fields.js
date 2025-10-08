@@ -5,5 +5,5 @@ module.exports = {
     "attendees":    { optional: false, mentionsOnly: true },
     "notes":        { optional: true, mentionsOnly: false },
     "evidence":     { optional: true, mentionsOnly: false },
-    "ping":         { optional: false, mentionsOnly: false }
+    "ping":         { optional: false, mentionsOnly: true }
 };
