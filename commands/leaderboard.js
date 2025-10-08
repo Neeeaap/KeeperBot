@@ -41,6 +41,7 @@ async function compileToEmbed(category, activity, max, order) {
 }
 
 module.exports = {
+    cooldown: 5,
     data: new SlashCommandBuilder()
         .setName("leaderboard")
         .setDescription("Displays the most active members")
@@ -80,7 +81,6 @@ module.exports = {
 
             await interaction.editReply({ embeds: [ leaderboard ] });
         } catch(err) {
-            interaction.editReply("There was a problem while running the command");
             throw err;
         }
     },

@@ -5,7 +5,7 @@ const { EmbedBuilder } = require("discord.js");
 const important = require("../configs/constants");
 const userSchema =  require("../schemas/UserSchema");
 
-const STAFF_ROLES = ["1425112155291648010"];
+//const STAFF_ROLES = ["1425112155291648010"];
 const EXCUSED_ROLES = ["1425115939753562163"];
 
 async function quotaReset(client) {
@@ -26,18 +26,19 @@ async function quotaReset(client) {
                 const member = await guild.members.fetch(user._id).catch(() => null);
                 if (!member) continue;
 
-                const isStaff = member.roles.cache.some(r => STAFF_ROLES.includes(r.id));
+                //const isStaff = member.roles.cache.some(r => STAFF_ROLES.includes(r.id));
                 const isExcused = member.roles.cache.some(r => EXCUSED_ROLES.includes(r.id));
 
-
-                const metQuota = isStaff
+                /*const metQuota = isStaff
                     ? user.hosted >= 1
-                    : user.attended >= 1;
+                    : user.attended >= 1;*/
+                const metQuota = user.attended > 0;
 
                 if (!metQuota && !isExcused) {
-                    const Reason = isStaff
+                    /*const Reason = isStaff
                         ? "did not host any events"
-                        : "did not attend any events";
+                        : "did not attend any events";*/
+                    const Reason = "did not attend any events";
 
                     failedQuota.push({
                         id: user._id,

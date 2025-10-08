@@ -21,6 +21,7 @@ const client = new Client({
     ] 
 });
 
+client.cooldowns = new Collection();
 client.commands = new Collection();
 const commandsPath = PATH.join(__dirname, "commands");
 const commandsFiles = FS.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
@@ -91,13 +92,46 @@ client.on(Events.MessageCreate, message => {
 
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
-    
+
     const command = client.commands.get(interaction.commandName);
     if (!command) return;
+
+    // Check for cooldown
+    const { cooldowns } = interaction.client;
+    if (!cooldowns.has(command.data.name)) {
+        cooldowns.set(command.data.name, new Collection());
+    }
+
+    const now = Date.now();
+    const timestamps = cooldowns.get(command.data.name);
+    const defaultCooldownDuration = 3;
+    const cooldownAmount = (command.cooldown ?? defaultCooldownDuration) * 1_000;
+
+    if (timestamps.has(interaction.user.id)) {
+        const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount;
+
+        if (now < expirationTime) {
+            const remainingTime = (expirationTime - now) / 1000;
+            const seconds = Math.floor(remainingTime % 60);
+            const minutes = Math.floor((remainingTime / 60) % 60);
+
+            const formatted = minutes > 0
+                ? `${minutes}m ${seconds}s`
+                : `${seconds}s`;
+
+            interaction.reply(`Please wait, you are on a cooldown for \`/${command.data.name}\`. You can use it again in ${formatted}`);
+            return;
+        }
+    }
+
+    // Set cooldown
+    timestamps.set(interaction.user.id, now);
+    setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
     try {
         await command.execute(interaction);
     } catch(err) {
+        interaction.editReply("There was a problem while running the command");
         console.error(err)
     }
 });
@@ -170,14 +204,19 @@ client.on(Events.GuildMemberRemove, async (member) => {
 })
 
 // Weekly quota reset
-CRON.schedule("0 0 * * 0", async() => {
-    try {
-        await require("./helpers/reset").quotaReset(client);
-        console.log("Weekly reset successful");
-    } catch(err) {
-        console.log("An error occured while resetting quota:", err);
-    }
-})
+if (!global.hasCronStarted) {
+    CRON.schedule("0 0 * * 0", async() => {
+        try {
+            await require("./helpers/reset").quotaReset(client);
+            console.log("Weekly reset successful");
+        } catch(err) {
+            console.log("An error occured while resetting quota:", err);
+        }
+    }, { timezone: "Asia/Singapore" });
+
+    global.hasCronStarted = true;
+    console.log("Cron scheduled");
+}
 
 async function start() {
     try {
