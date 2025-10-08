@@ -224,7 +224,9 @@ async function start() {
 
         await client.login(important.botToken);
         console.log(`Logged in as ${client.user.tag}`);
-        //require("./weeklyCheckTest").testReset(client);
+
+       // require("./initDatabase").initDB(client);
+       // await require("./helpers/reset").quotaReset(client);
     } catch(err) {
         console.error("Failed to start:", err)
         process.exit(1);
