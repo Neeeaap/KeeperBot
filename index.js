@@ -53,7 +53,7 @@ client.on(Events.MessageCreate, message => {
         if (formatFields[key].mentionsOnly === true) {
             if (formatFields[key].optional && (!info || info.trim() === "")) continue;
 
-            if (!important.mentionRegex.test(info)) {
+            if (!info.match(important.mentionRegex)) {
                 sendError(message, `Invalid ${key} input`, `You must include valid mentions under **${key}**`);
                 return;
             }
