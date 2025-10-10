@@ -8,8 +8,9 @@ KeeperBot is written in JavaScript and uses MongoDB for its database.
 At the end of every week `Sunday 00:00 UTC+8 Singapore Time`, the weekly quota will be checked and reset. A list of most active members and those who failed quota will be displayed (if any).
 
 ## Commands
-### `/leaderboard`: `[category] [activity]`
-Displays a list of members with the most hosts, cohosts or events attended  
+### <ins>HEARTKEEPER+</ins>
+### `/leaderboard`: `[category] [activity]`  
+Displays a list of members with the most hosts, cohosts or events attended.   
 - **category**: Specifies which leaderboard to view (`Weekly`, `All Time`)  
 - **activity**: Specifies which activity type in the leaderboard to view (`Hosts`, `Co-Hosts`, `Attendees`)
 
@@ -17,5 +18,13 @@ Displays a list of members with the most hosts, cohosts or events attended
 Displays your member stats (hosts, cohosts and events attended) for Weekly and All Time.  
 - **member**: Specifies which member you want to view the stats of
 
+### <ins>STAFF+</ins>
+### `/modify`: `[member] [category] [amount]`  
+Modify a specified user's data  
+- **member**: Specifies which member you want to modify
+- **category:** The data you wish to change
+- **amount:** The amount to increment their data by
+
 ## Coming Soon
 - **Levels system**
+- **Auto-Strike system**
