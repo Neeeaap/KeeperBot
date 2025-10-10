@@ -1,5 +1,6 @@
 const Mongoose = require("mongoose");
 const { SlashCommandBuilder } = require("discord.js");
+const userSchema = require("../schemas/UserSchema");
 
 const important = require("../configs/constants");
 
