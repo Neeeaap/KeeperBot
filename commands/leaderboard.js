@@ -41,7 +41,8 @@ async function compileToEmbed(category, activity, max, order) {
 }
 
 module.exports = {
-    cooldown: 5,
+    cooldown: 10,
+    allowedRoles: ["1319685912229056592"],
     data: new SlashCommandBuilder()
         .setName("leaderboard")
         .setDescription("Displays the most active members")

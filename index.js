@@ -95,6 +95,18 @@ client.on(Events.InteractionCreate, async interaction => {
     const command = client.commands.get(interaction.commandName);
     if (!command) return;
 
+    // Check if user has permission
+    if (command.allowedRoles?.length) {
+        const hasPerms = interaction.member.roles.cache.some(role =>
+            command.allowedRoles.includes(role.id)
+        );
+
+        if (!hasPerms) {
+            interaction.reply("You do not have permission to use this command");
+            return;
+        }
+    }
+
     // Check for cooldown
     const { cooldowns } = interaction.client;
     if (!cooldowns.has(command.data.name)) {

@@ -16,11 +16,6 @@ const categoryLabels = {
 };
 
 async function displayProfile(member) {
-    const isMember = member.roles.cache.has(important.memberId);
-    if (!isMember) {
-        return 1;
-    }
-
     try {
         const AllTimeDB = Mongoose.connection.useDb("AllTimeDB");
         const WeeklyDB = Mongoose.connection.useDb("WeeklyDB");
@@ -61,7 +56,8 @@ async function displayProfile(member) {
 }
 
 module.exports = {
-    cooldown: 5,
+    cooldown: 10,
+    allowedRoles: ["1319685912229056592"],
     data: new SlashCommandBuilder()
         .setName("profile")
         .setDescription("Displays performance stats")
@@ -78,17 +74,13 @@ module.exports = {
         const member = await interaction.guild.members.fetch(user.id);
 
         if (member.user.bot) {
-            await interaction.editReply("The user you specified is a bot, only humans are allowed sorry");
+            await interaction.editReply("The user you specified is a bot, only humans are allowed");
             return;
         }
 
         try {
             let profile = await displayProfile(member);
-            if (profile === 1) {
-                await interaction.editReply("This command is reserved for Heartkeeper members only");
-            } else {
-                await interaction.editReply({ embeds: [ profile ] });
-            }
+            await interaction.editReply({ embeds: [ profile ] });
         } catch(err) {
             throw err;
         }
