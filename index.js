@@ -34,7 +34,7 @@ for (const file of commandsFiles) {
 client.on(Events.MessageCreate, message => {
     if (message.author.bot) return;
     if (message.channel.id !== important.eventLogChannelId) return;
-    if (!message.content.toLowerCase().startsWith("event")) return;
+    if (!utility.stripMarkdown(message.content).toLowerCase().startsWith("event")) return;
 
     let content = message.content.trim();
     let lines = content.split("\n");
