@@ -5,7 +5,7 @@ Only to be used by members of the Heartkeepers, its main purpose is to track eve
 KeeperBot is written in JavaScript and uses MongoDB for its database.
 
 ## Automation
-At the end of every week `Sunday 00:00 UTC+8 Singapore Time`, the weekly quota will be checked and reset. A list of most active members and those who failed quota will be displayed (if any).
+At the end of every week `Monday 00:00 UTC+8 Singapore Time`, the weekly quota will be checked and reset. A list of most active members and those who failed quota will be displayed (if any).
 
 ## Commands
 ### <ins>HEARTKEEPER+</ins>

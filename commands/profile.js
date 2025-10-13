@@ -57,7 +57,7 @@ async function displayProfile(member) {
 
 module.exports = {
     cooldown: 10,
-    allowedRoles: ["1319685912229056592"],
+    allowedRoles: ["1319685912229056592", "1425131169309265920"],
     data: new SlashCommandBuilder()
         .setName("profile")
         .setDescription("Displays performance stats")
