@@ -22,7 +22,7 @@ Displays your member stats (hosts, cohosts and events attended) for Weekly and A
 ### `/modify`: `[member] [category] [amount]`  
 Modify a specified user's data  
 - **member**: Specifies which member you want to modify
-- **category:** The data you wish to change
+- **category:** The data you wish to change (`Hosts`, `Co-Hosts`, `Attendees`)
 - **amount:** The amount to increment their data by
 
 ## Coming Soon
