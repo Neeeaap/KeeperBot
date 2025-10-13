@@ -48,7 +48,7 @@ module.exports = {
 
         const isMember = member.roles.cache.has(important.memberId);
         if (!isMember) {
-            await interaction.editReply("The user you specified is not a Heartkeeper, only Heartkeepers may exist in the database")
+            await interaction.editReply("The user you specified is not a Heartkeeper, only those who serve may exist in the database")
             return;
         }
 

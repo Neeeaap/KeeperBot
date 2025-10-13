@@ -216,7 +216,7 @@ client.on(Events.GuildMemberRemove, async (member) => {
 
 // Weekly quota reset
 if (!global.hasCronStarted) {
-    CRON.schedule("0 0 * * 0", async() => {
+    CRON.schedule("0 0 * * 1", async() => {
         try {
             await require("./helpers/reset").quotaReset(client);
             console.log("Weekly reset successful");
