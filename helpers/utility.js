@@ -3,25 +3,21 @@ const userSchema = require("../schemas/UserSchema");*/
 
 const important = require("../configs/constants");
 
-/*async function initDatabase() {
-    try {
-        await Mongoose.connect(important.mongoURI);
-        console.log("Connected to MongoDB")
-
-        const AllTimeDB = Mongoose.connection.useDb("AllTimeDB");
-        const WeeklyDB = Mongoose.connection.useDb("WeeklyDB");
-        const WeeklyUser = WeeklyDB.model("User", userSchema);
-        const AllTimeUser = AllTimeDB.model("User", userSchema);
-
-        return { WeeklyUser, AllTimeUser };
-    } catch(err) {
-        throw err;
-    }
-}*/
+function stripMarkdown(text) {
+  return text
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/(\*\*|\*|__|~~|\|\|)(.*?)\1/g, "$2")
+    .replace(/^\s*>+\s?/gm, "")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/\\([*_~`[\]\\()])/g, "$1")
+    .replace(/[\s\-]+/g, "")
+    .trim();
+}
 
 function extractUserIds(mention) {
     if (!mention) return [];
     return [...mention.matchAll(/<@!?(\d+)>/g)].map(match => match[1]);
 }
 
-module.exports = { extractUserIds };
+module.exports = { extractUserIds, stripMarkdown };

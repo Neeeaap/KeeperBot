@@ -9,6 +9,7 @@ const formatFields = require("./configs/fields");
 const important = require("./configs/constants");
 const LogsModule = require("./helpers/logs");
 const userSchema = require("./schemas/UserSchema");
+const utility = require("./helpers/utility");
 
 const client = new Client({ 
     intents: [
@@ -41,7 +42,7 @@ client.on(Events.MessageCreate, message => {
 
     for (const line of lines) {
         let [rawKey, ...value] = line.split(":");
-        let key = rawKey?.trim().toLowerCase().replace(/[\s\-]+/g, "");
+        let key = utility.stripMarkdown(rawKey)?.toLowerCase();
         let info = value.join(":").trim();
 
         let field = formatFields[key];
