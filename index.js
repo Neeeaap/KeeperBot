@@ -41,7 +41,7 @@ client.on(Events.MessageCreate, message => {
 
     for (const line of lines) {
         let [rawKey, ...value] = line.split(":");
-        let key = rawKey?.trim().toLowerCase();
+        let key = rawKey?.trim().toLowerCase().replace(/[\s\-]+/g, "");
         let info = value.join(":").trim();
 
         let field = formatFields[key];

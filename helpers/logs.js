@@ -12,7 +12,7 @@ async function updateWeeklyDB(data) {
     const userData = {
         event: data.event,
         host: extractUserIds(data.host),
-        cohost: extractUserIds(data["co-host"]),
+        cohost: extractUserIds(data.cohost),
         attendees: extractUserIds(data.attendees),
     };
 
