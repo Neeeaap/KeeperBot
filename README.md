@@ -2,7 +2,7 @@
 A custom bot for the Heartkeepers Guild, developed by Nepfinea.  
 Only to be used by members of the Heartkeepers, its main purpose is to track event logs and check quota.  
 
-KeeperBot is written in JavaScript and uses MongoDB for its database.
+KeeperBot is written in JavaScript (slowly migrating to TypeScript!) and uses MongoDB for its database.
 
 ## Automation
 At the end of every week `Monday 00:00 UTC+8 Singapore Time`, the weekly quota will be checked and reset. A list of most active members and those who failed quota will be displayed (if any).

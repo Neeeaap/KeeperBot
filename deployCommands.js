@@ -5,7 +5,7 @@ const PATH = require("node:path");
 
 const commands = [];
 const commandsPath = PATH.join(__dirname, "commands");
-const commandFiles = FS.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
+const commandFiles = FS.readdirSync(commandsPath).filter(file => file.endsWith(".js") || file.endsWith(".ts"));
 
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
@@ -22,7 +22,7 @@ async function start() {
     try {
         console.log("Refreshing application slash commands...");
         await rest.put(
-            Routes.applicationCommands("1424083255619092671", "859754230801235980"),
+            Routes.applicationCommands("1424083255619092671", "1319684991449563228"),
             { body: commands }
         );
 
