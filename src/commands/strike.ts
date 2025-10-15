@@ -4,7 +4,7 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember, Guild } 
 import important from "../configs/constants.js";
 import userSchema from "../schemas/UserSchema.js";
 
-const strikeIds = [
+export const strikeIds = [
     "1367413785026887752", // Guild Strike 1
     "1367413788034334794", // Guild Strike 2
     "1385611642187939902" // Guild Strike 3 (Removal)

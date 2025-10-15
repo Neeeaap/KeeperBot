@@ -9,6 +9,8 @@ const userSchema =  require("../schemas/UserSchema");
 const STAFF_ROLES = ["1364898392689606667"];
 const EXCUSED_ROLES = ["1364068742077743284", "1319685397697007677", "1319685026446704732", "1382354473942388800"];
 
+const StrikeModule = require("../commands/strike");
+
 async function quotaReset(client) {
     console.log("Starting weekly reset...");
     try {
@@ -22,7 +24,9 @@ async function quotaReset(client) {
         const reportChannel = await guild.channels.fetch(important.reportChannelId);
 
         // Check quota
-        let failedQuota = []
+        let failedQuota = [];
+        let membersToAddStrike = [];
+        let membersToRemoveStrike = [];
         for await (const user of cursor) {
             try {
                 const member = await guild.members.fetch(user._id).catch(() => null);
@@ -49,11 +53,19 @@ async function quotaReset(client) {
                         id: user._id,
                         reason: Reason
                     });
+
+                    membersToAddStrike.push(member);
+                } else if (metQuota) {
+                    membersToRemoveStrike.push(member);
                 }
             } catch (memErr) {
                 console.error(`Error while checking user ${user._id}`, memErr);
             }
         }
+
+        // Auto-Strike
+        StrikeModule.strike(membersToAddStrike, 1);
+        StrikeModule.strike(membersToRemoveStrike, -1);
 
         // Display top 2 hosts and attendees
         const topHosts = await WeeklyUser.find()
