@@ -1,5 +1,5 @@
 import Mongoose from "mongoose";
-import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember, Guild } from "discord.js";
+import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember } from "discord.js";
 
 import important from "../configs/constants.js";
 import userSchema from "../schemas/UserSchema.js";
@@ -45,55 +45,57 @@ export async function strike(members: GuildMember | GuildMember[], amount: numbe
     }
 }
 
-export const cooldown = 5;
-export const allowedRoles = ["1425112155291648010", "1364898392689606667", "1319685026446704732", "1319685397697007677"];
-export const data = new SlashCommandBuilder()
-    .setName("strike")
-    .setDescription("Increment a specified member's strike count")
-    .addUserOption((option) =>
-        option
-            .setName("member")
-            .setDescription("The member to strike")
-            .setRequired(true)
-    )
-    .addIntegerOption((option) => 
-        option
-            .setName("amount")
-            .setDescription("The amount of strikes")
-            .setMaxValue(3)
-            .setMinValue(-3)
-            .setRequired(true)
-    );
+export default {
+    cooldown: 5,
+    allowedRoles: ["1425112155291648010", "1364898392689606667", "1319685026446704732", "1319685397697007677"],
+    data: new SlashCommandBuilder()
+        .setName("strike")
+        .setDescription("Increment a specified member's strike count")
+        .addUserOption((option) =>
+            option
+                .setName("member")
+                .setDescription("The member to strike")
+                .setRequired(true)
+        )
+        .addIntegerOption((option) => 
+            option
+                .setName("amount")
+                .setDescription("The amount of strikes")
+                .setMaxValue(3)
+                .setMinValue(-3)
+                .setRequired(true)
+        ),
 
-export async function execute(interaction: ChatInputCommandInteraction) {
-    const amount = interaction.options.getInteger("amount");
-    await interaction.deferReply();
+    async execute(interaction: ChatInputCommandInteraction) {
+        const amount = interaction.options.getInteger("amount");
+        await interaction.deferReply();
 
-    if (!amount) {
-        await interaction.editReply("Please specify strike amount");
-        return;
-    }
+        if (!amount) {
+            await interaction.editReply("Please specify strike amount");
+            return;
+        }
 
-    if (!interaction.guild) {
-        await interaction.editReply("This command can only be used inside a server");
-        return;
-    }
+        if (!interaction.guild) {
+            await interaction.editReply("This command can only be used inside a server");
+            return;
+        }
 
-    const user = interaction.options.getUser("member");
-    if (!user) return;
+        const user = interaction.options.getUser("member");
+        if (!user) return;
 
-    const member = await interaction.guild.members.fetch(user.id);
-    const isMember = member.roles.cache.has(important.memberId!);
-    if (!isMember) {
-        interaction.editReply("You can only configure strikes for Heartkeeper members");
-        return;
-    }
+        const member = await interaction.guild.members.fetch(user.id);
+        const isMember = member.roles.cache.has(important.memberId!);
+        if (!isMember) {
+            interaction.editReply("You can only configure strikes for Heartkeeper members");
+            return;
+        }
 
-    try {
-        await strike(member, amount);
-        interaction.editReply(`Successfully incremented ${member.user.username}'s strike count by ${amount}`);
-        console.log(`STRIKE COMMAND: ${interaction.member?.user.username} (${interaction.member?.user.id}) incremented ${member.user.username}'s (${member.user.id}) strike count by ${amount}`);
-    } catch(err) {
-        throw err;
+        try {
+            await strike(member, amount);
+            interaction.editReply(`Successfully incremented ${member.user.username}'s strike count by ${amount}`);
+            console.log(`STRIKE COMMAND: ${interaction.member?.user.username} (${interaction.member?.user.id}) incremented ${member.user.username}'s (${member.user.id}) strike count by ${amount}`);
+        } catch(err) {
+            throw err;
+        }
     }
 }
