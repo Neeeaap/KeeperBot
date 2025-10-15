@@ -4,21 +4,20 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, GuildMember } from "d
 import important from "../configs/constants.js";
 import userSchema from "../schemas/UserSchema.js";
 
-export const strikeIds = [
+const strikeIds = [
     "1367413785026887752", // Guild Strike 1
     "1367413788034334794", // Guild Strike 2
     "1385611642187939902" // Guild Strike 3 (Removal)
-];
+]
 
-export async function strike(members: GuildMember | GuildMember[], amount: number) {
-    try {
-        const memberList = Array.isArray(members) ? members : [members];
+async function strike(members: GuildMember | GuildMember[], amount: number) {
+    const memberList = Array.isArray(members) ? members : [members];
+    const AllTimeDB = Mongoose.connection.useDb("AllTimeDB");
+    const AllTimeUser = AllTimeDB.model("User", userSchema);
 
-        const AllTimeDB = Mongoose.connection.useDb("AllTimeDB");
-        const AllTimeUser = AllTimeDB.model("User", userSchema);
-
-        await Promise.all(
-            memberList.map(async (member) => {
+    await Promise.all(
+        memberList.map(async (member) => {
+            try {
                 // Get current strikes
                 const userData = await AllTimeUser.findById(member.user.id);
                 const currentStrikes = userData?.strikes ?? 0;
@@ -34,18 +33,18 @@ export async function strike(members: GuildMember | GuildMember[], amount: numbe
                 );
 
                 // Update member roles
-                await member.roles.remove(strikeIds).catch(() => {});
+                await member.roles.remove(strikeIds).catch(() => { });
                 if (newStrikes > 0 && newStrikes <= 3) {
-                    await member.roles.add(strikeIds[newStrikes - 1]!).catch(() => {});
+                    await member.roles.add(strikeIds[newStrikes - 1]!).catch(() => { });
                 }
-            })
-        );
-    } catch(err) {
-        throw err;
-    }
+            } catch(err) {
+                console.error(`Error while striking ${member.user.username} (${member.user.id}):`, err);
+            }
+        })
+    );
 }
 
-export default {
+export = {
     cooldown: 5,
     allowedRoles: ["1425112155291648010", "1364898392689606667", "1319685026446704732", "1319685397697007677"],
     data: new SlashCommandBuilder()
@@ -97,5 +96,9 @@ export default {
         } catch(err) {
             throw err;
         }
+    },
+
+    async runStrike(members: GuildMember | GuildMember[], amount: number) {
+        strike(members, amount);
     }
 }

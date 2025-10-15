@@ -64,8 +64,8 @@ async function quotaReset(client) {
         }
 
         // Auto-Strike
-        StrikeModule.strike(membersToAddStrike, 1);
-        StrikeModule.strike(membersToRemoveStrike, -1);
+        StrikeModule.runStrike(membersToAddStrike, 1);
+        StrikeModule.runStrike(membersToRemoveStrike, -1);
 
         // Display top 2 hosts and attendees
         const topHosts = await WeeklyUser.find()
