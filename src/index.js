@@ -24,7 +24,7 @@ const client = new Client({
 client.cooldowns = new Collection();
 client.commands = new Collection();
 const commandsPath = PATH.join(__dirname, "commands");
-const commandsFiles = FS.readdirSync(commandsPath).filter(file => file.endsWith(".js") || file.endsWith(".ts"));
+const commandsFiles = FS.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
 
 for (const file of commandsFiles) {
     const command = require(`./commands/${file}`);

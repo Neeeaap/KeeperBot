@@ -5,7 +5,7 @@ const PATH = require("node:path");
 
 const commands = [];
 const commandsPath = PATH.join(__dirname, "commands");
-const commandFiles = FS.readdirSync(commandsPath).filter(file => file.endsWith(".js") || file.endsWith(".ts"));
+const commandFiles = FS.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
 
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
