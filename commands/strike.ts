@@ -30,7 +30,7 @@ export async function strike(member: GuildMember, amount: number) {
             await member.roles.add(strikeIds[0]!).catch(() => {});
         } else if (newStrikes === 2) {
             await member.roles.add(strikeIds[1]!).catch(() => {});
-        } else if (newStrikes === 2) {
+        } else if (newStrikes === 3) {
             await member.roles.add(strikeIds[2]!).catch(() => {});
         }
     } catch(err) {
