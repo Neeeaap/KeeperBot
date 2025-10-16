@@ -7,7 +7,7 @@ const important = require("../configs/constants");
 const userSchema =  require("../schemas/UserSchema");
 
 const STAFF_ROLES = ["1364898392689606667", "1425112155291648010"];
-const EXCUSED_ROLES = ["1364068742077743284", "1319685397697007677", "1319685026446704732", "1382354473942388800"];
+const EXCUSED_ROLES = ["1364068742077743284", "1319685397697007677", "1319685026446704732", "1382354473942388800", "1319698133273284638"];
 
 const StrikeModule = require("../commands/strike");
 
@@ -20,7 +20,7 @@ async function quotaReset(client) {
         // Get all users weekly data
         const cursor = WeeklyUser.find().cursor();
         const guild = await client.guilds.fetch(important.guildId);
-        //const announceChannel = await guild.channels.fetch(important.announceChannelId);
+        const announceChannel = await guild.channels.fetch(important.announceChannelId);
         const reportChannel = await guild.channels.fetch(important.reportChannelId);
 
         // Check quota
@@ -68,7 +68,7 @@ async function quotaReset(client) {
         StrikeModule.runStrike(membersToRemoveStrike, -1);
 
         // Display top 2 hosts and attendees
-        /*const topHosts = await WeeklyUser.find()
+        const topHosts = await WeeklyUser.find()
             .sort({ hosted: -1})
             .limit(2)
             .lean();
@@ -88,7 +88,7 @@ async function quotaReset(client) {
             .setFooter({ text: "A PALTRY OFFERING, BUT MORE THAN YOUR KIND USUALLY AMOUNT TO" })
             .setTimestamp();
 
-        await announceChannel.send({ embeds: [topMembersEmbed] });*/
+        await announceChannel.send({ embeds: [topMembersEmbed] });
 
         // Construct failed quota list (if any)
         let failedQuotaEmbed;
@@ -113,7 +113,7 @@ async function quotaReset(client) {
         // Construct pending removal list (if any)
         let pendingRemovalEmbed;
         if (addStrikes.length > 0) {
-            const pendingRemovalList = addStrikes.map((u, i) => `**${i + 1}** <@${u.user.id}>`).join("\n");
+            const pendingRemovalList = addStrikes.map((u, i) => `**${i + 1}.** <@${u.user.id}>`).join("\n");
             pendingRemovalEmbed = new EmbedBuilder()
                 .setColor([79, 14, 2])
                 .setTitle(":exclamation: PENDING REMOVAL")
@@ -130,12 +130,10 @@ async function quotaReset(client) {
         // Display embeds
         await reportChannel.send(`<@&1319685026446704732> <@&1319685397697007677> <@&1364068742077743284>`);
         await reportChannel.send({embeds: [failedQuotaEmbed]});
-        if (pendingRemovalEmbed) {
-            await reportChannel.send({embeds: [pendingRemovalEmbed]});
-        }
+        await reportChannel.send({embeds: [pendingRemovalEmbed]});
 
         // Reset Weekly data
-        //await LogsModule.rollWeeklyToAllTime();
+        await LogsModule.rollWeeklyToAllTime();
     } catch (err) {
         console.log("Error during weekly reset");
         throw err;

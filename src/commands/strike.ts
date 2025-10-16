@@ -5,9 +5,9 @@ import important from "../configs/constants.js";
 import userSchema from "../schemas/UserSchema.js";
 
 const strikeIds = [
-    "1428437881105547264", // Guild Strike 1
-    "1428437916438495302", // Guild Strike 2
-    "1428437943038509119" // Guild Strike 3 (Removal)
+    "1367413785026887752", // Guild Strike 1
+    "1367413788034334794", // Guild Strike 2
+    "1385611642187939902" // Guild Strike 3 (Removal)
 ]
 
 async function strike(members: GuildMember | GuildMember[], amount: number) {
