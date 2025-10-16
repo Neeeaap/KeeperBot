@@ -85,7 +85,7 @@ async function quotaReset(client) {
                 { name: "Top Weekly Host", value: `The top host for this week goes to <@${topHosts[0]._id}> with ${topHosts[0].hosted} events hosted, followed by <@${topHosts[1]._id}> with ${topHosts[1].hosted} hosts!` },
                 { name: "Top Weekly Attendee", value: `The top attendee for this week goes to <@${topAttendees[0]._id}> with ${topAttendees[0].attended} events attended, followed by <@${topAttendees[1]._id}> with ${topAttendees[1].attended} attendees!` }
             )
-            .setFooter({ text: "Keep working hard, Heartkeepers" })
+            .setFooter({ text: "A PALTRY OFFERING, BUT MORE THAN YOUR KIND USUALLY AMOUNT TO" })
             .setTimestamp();
 
         await announceChannel.send({ embeds: [topMembersEmbed] });*/
@@ -97,7 +97,7 @@ async function quotaReset(client) {
             failedQuotaEmbed = new EmbedBuilder()
                 .setColor([255, 0, 0])
                 .setTitle(":warning: Failed Quota")
-                .setDescription(failedList)
+                .setDescription("The following members have been given a strike:\n", failedList)
                 .setTimestamp();
             console.log(`[WEEKLY CHECK]: ${failedQuota.length} members did not meet quota`);
         } else {
@@ -106,7 +106,7 @@ async function quotaReset(client) {
                 .setTitle(":white_check_mark: Quota Complete")
                 .setDescription("Everyone completed their quota!")
                 .setTimestamp();
-            console.log("[WEEKLY CHECK]: All members met their quota this week!");
+            console.log("[WEEKLY CHECK]: All members completed their quota this week");
         }
 
         // Construct pending removal list (if any)
