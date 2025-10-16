@@ -20,7 +20,7 @@ async function quotaReset(client) {
         // Get all users weekly data
         const cursor = WeeklyUser.find().cursor();
         const guild = await client.guilds.fetch(important.guildId);
-        const announceChannel = await guild.channels.fetch(important.announceChannelId);
+        //const announceChannel = await guild.channels.fetch(important.announceChannelId);
         const reportChannel = await guild.channels.fetch(important.reportChannelId);
 
         // Check quota
