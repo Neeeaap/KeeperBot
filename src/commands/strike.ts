@@ -15,6 +15,7 @@ async function strike(members: GuildMember | GuildMember[], amount: number) {
     const AllTimeDB = Mongoose.connection.useDb("AllTimeDB");
     const AllTimeUser = AllTimeDB.model("User", userSchema);
 
+    let pendingRemoval: GuildMember[] = [];
     await Promise.all(
         memberList.map(async (member) => {
             try {
@@ -37,18 +38,16 @@ async function strike(members: GuildMember | GuildMember[], amount: number) {
                 if (newStrikes > 0 && newStrikes <= 3) {
                     await member.roles.add(strikeIds[newStrikes - 1]!).catch(() => { });
                 }
-
-                let pendingRemoval = [];
+                
                 if (newStrikes >= 3) {
                     pendingRemoval.push(member);
                 }
-
-                return pendingRemoval;
             } catch(err) {
                 console.error(`Error while striking ${member.user.username} (${member.user.id}):`, err);
             }
         })
     );
+    return pendingRemoval;
 }
 
 export = {
