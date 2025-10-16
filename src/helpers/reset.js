@@ -64,7 +64,7 @@ async function quotaReset(client) {
         }
 
         // Auto-Strike
-        let addStrikes = StrikeModule.runStrike(membersToAddStrike, 1);
+        let addStrikes = await StrikeModule.runStrike(membersToAddStrike, 1);
         StrikeModule.runStrike(membersToRemoveStrike, -1);
 
         // Display top 2 hosts and attendees
