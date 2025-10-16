@@ -106,6 +106,7 @@ export = {
     },
 
     async runStrike(members: GuildMember | GuildMember[], amount: number) {
-        strike(members, amount);
+        let strikeMembers = strike(members, amount);
+        return strikeMembers;
     }
 }
