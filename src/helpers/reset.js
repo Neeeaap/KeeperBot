@@ -97,7 +97,7 @@ async function quotaReset(client) {
             failedQuotaEmbed = new EmbedBuilder()
                 .setColor([255, 0, 0])
                 .setTitle(":warning: Failed Quota")
-                .setDescription("The following members have been given a strike:\n", failedList)
+                .setDescription(`The following members have been given a strike:\n${failedList}`)
                 .setTimestamp();
             console.log(`[WEEKLY CHECK]: ${failedQuota.length} members did not meet quota`);
         } else {
@@ -116,7 +116,7 @@ async function quotaReset(client) {
             pendingRemovalEmbed = new EmbedBuilder()
                 .setColor([79, 14, 2])
                 .setTitle(":exclamation: PENDING REMOVAL")
-                .setDescription("The following members have failed to meet quota 3 times consecutively:\n", pendingRemovalList)
+                .setDescription(`The following members have failed to meet quota 3 times consecutively:\n${pendingRemovalList}`)
                 .setTimestamp();
         } else {
             pendingRemovalEmbed = new EmbedBuilder()
