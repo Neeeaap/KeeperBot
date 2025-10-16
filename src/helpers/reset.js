@@ -118,13 +118,18 @@ async function quotaReset(client) {
                 .setTitle(":exclamation: PENDING REMOVAL")
                 .setDescription("The following members have failed to meet quota 3 times consecutively:\n", pendingRemovalList)
                 .setTimestamp();
+        } else {
+            pendingRemovalEmbed = new EmbedBuilder()
+                .setColor([0, 255, 0])
+                .setDescription(":white_check_mark: No members pending removal")
+                .setTimestamp();
         }
         
         // Display embeds
         await reportChannel.send(`<@&1319685026446704732> <@&1319685397697007677> <@&1364068742077743284>`);
-        await reportChannel.send(failedQuotaEmbed);
+        await reportChannel.send({embeds: [failedQuotaEmbed]});
         if (pendingRemovalEmbed) {
-            await reportChannel.send(pendingRemovalEmbed);
+            await reportChannel.send({embeds: [pendingRemovalEmbed]});
         }
 
         // Reset Weekly data
