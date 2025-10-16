@@ -82,7 +82,7 @@ client.on(Events.MessageCreate, message => {
     // Store data
     LogsModule.updateWeeklyDB(rawData)
         .then(() => {
-            sendSuccess(message, ":clipboard: Weekly data logged successfully");
+            sendSuccess(message, ":clipboard: Event logged successfully");
         })
         .catch((error) => {
             console.error("updateWeeklyDB() failed:", error);
@@ -239,7 +239,7 @@ async function start() {
         console.log(`Logged in as ${client.user.tag}`);
 
        // require("./initDatabase").initDB(client);
-       // await require("./helpers/reset").quotaReset(client);
+       await require("./helpers/reset").quotaReset(client);
     } catch(err) {
         console.error("Failed to start:", err)
         process.exit(1);

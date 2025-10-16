@@ -6,7 +6,7 @@ const LogsModule = require("./logs");
 const important = require("../configs/constants");
 const userSchema =  require("../schemas/UserSchema");
 
-const STAFF_ROLES = ["1364898392689606667"];
+const STAFF_ROLES = ["1364898392689606667", "1425112155291648010"];
 const EXCUSED_ROLES = ["1364068742077743284", "1319685397697007677", "1319685026446704732", "1382354473942388800"];
 
 const StrikeModule = require("../commands/strike");
@@ -64,11 +64,11 @@ async function quotaReset(client) {
         }
 
         // Auto-Strike
-        StrikeModule.runStrike(membersToAddStrike, 1);
+        let addStrikes = StrikeModule.runStrike(membersToAddStrike, 1);
         StrikeModule.runStrike(membersToRemoveStrike, -1);
 
         // Display top 2 hosts and attendees
-        const topHosts = await WeeklyUser.find()
+        /*const topHosts = await WeeklyUser.find()
             .sort({ hosted: -1})
             .limit(2)
             .lean();
@@ -88,38 +88,47 @@ async function quotaReset(client) {
             .setFooter({ text: "Keep working hard, Heartkeepers" })
             .setTimestamp();
 
-        await announceChannel.send({ embeds: [topMembersEmbed] });
+        await announceChannel.send({ embeds: [topMembersEmbed] });*/
 
-        // Display failed quota list (if any)
+        // Construct failed quota list (if any)
+        let failedQuotaEmbed;
         if (failedQuota.length > 0) {
             const failedList = failedQuota.map((u, i) => `**${i + 1}.** <@${u.id}> — ${u.reason}`).join("\n");
-            const embed = new EmbedBuilder()
+            failedQuotaEmbed = new EmbedBuilder()
                 .setColor([255, 0, 0])
                 .setTitle(":warning: Failed Quota")
                 .setDescription(failedList)
                 .setTimestamp();
-
-            await reportChannel.send({
-                content: `<@&1319685026446704732> <@&1319685397697007677> <@&1364068742077743284>`,
-                embeds: [embed] 
-            });
             console.log(`[WEEKLY CHECK]: ${failedQuota.length} members did not meet quota`);
         } else {
-            const embed = new EmbedBuilder()
+            failedQuotaEmbed = new EmbedBuilder()
                 .setColor([0, 255, 0])
                 .setTitle(":white_check_mark: Quota Complete")
                 .setDescription("Everyone completed their quota!")
                 .setTimestamp();
-
-            await reportChannel.send({
-                content: `<@&1319685026446704732> <@&1319685397697007677> <@&1364068742077743284>`,
-                embeds: [embed] 
-            });
             console.log("[WEEKLY CHECK]: All members met their quota this week!");
         }
 
+        // Construct pending removal list (if any)
+        let pendingRemovalEmbed;
+        if (addStrikes.length > 0) {
+            const pendingRemovalList = addStrikes.map((u, i) => `**${i + 1}** <@${u.user.id}>`).join("\n");
+            pendingRemovalEmbed = new EmbedBuilder()
+                .setColor([79, 14, 2])
+                .setTitle(":exclamation: PENDING REMOVAL")
+                .setDescription("The following members have failed to meet quota 3 times consecutively:\n", pendingRemovalList)
+                .setTimestamp();
+        }
+        
+        // Display embeds
+        await reportChannel.send(`<@&1319685026446704732> <@&1319685397697007677> <@&1364068742077743284>`);
+        await reportChannel.send(failedQuotaEmbed);
+        if (pendingRemovalEmbed) {
+            await reportChannel.send(pendingRemovalEmbed);
+        }
+
         // Reset Weekly data
-        await LogsModule.rollWeeklyToAllTime();
+        //await LogsModule.rollWeeklyToAllTime();
     } catch (err) {
         console.log("Error during weekly reset");
         throw err;

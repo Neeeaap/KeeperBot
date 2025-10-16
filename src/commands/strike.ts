@@ -5,9 +5,9 @@ import important from "../configs/constants.js";
 import userSchema from "../schemas/UserSchema.js";
 
 const strikeIds = [
-    "1367413785026887752", // Guild Strike 1
-    "1367413788034334794", // Guild Strike 2
-    "1385611642187939902" // Guild Strike 3 (Removal)
+    "1428437881105547264", // Guild Strike 1
+    "1428437916438495302", // Guild Strike 2
+    "1428437943038509119" // Guild Strike 3 (Removal)
 ]
 
 async function strike(members: GuildMember | GuildMember[], amount: number) {
@@ -37,6 +37,13 @@ async function strike(members: GuildMember | GuildMember[], amount: number) {
                 if (newStrikes > 0 && newStrikes <= 3) {
                     await member.roles.add(strikeIds[newStrikes - 1]!).catch(() => { });
                 }
+
+                let pendingRemoval = [];
+                if (newStrikes >= 3) {
+                    pendingRemoval.push(member);
+                }
+
+                return pendingRemoval;
             } catch(err) {
                 console.error(`Error while striking ${member.user.username} (${member.user.id}):`, err);
             }
