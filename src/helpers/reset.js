@@ -82,13 +82,13 @@ async function quotaReset(client) {
             .setColor([128,0,128])
             .setTitle("Weekly Quota Reset")
             .addFields(
-                { name: "Top Weekly Host", value: `The top host for this week goes to <@${topHosts[0]._id}> with ${topHosts[0].hosted} events hosted, followed by <@${topHosts[1]._id}> with ${topHosts[1].hosted} hosts!` },
-                { name: "Top Weekly Attendee", value: `The top attendee for this week goes to <@${topAttendees[0]._id}> with ${topAttendees[0].attended} events attended, followed by <@${topAttendees[1]._id}> with ${topAttendees[1].attended} attendees!` }
+                { name: "Top Weekly Host", value: `The top host for this week goes to <@${topHosts[0]._id}> with ${topHosts[0].hosted} events hosted, followed by <@${topHosts[1]._id}> with ${topHosts[1].hosted} hosts` },
+                { name: "Top Weekly Attendee", value: `The top attendee for this week goes to <@${topAttendees[0]._id}> with ${topAttendees[0].attended} events attended, followed by <@${topAttendees[1]._id}> with ${topAttendees[1].attended} attendees` }
             )
             .setFooter({ text: "A PALTRY OFFERING, BUT MORE THAN YOUR KIND USUALLY AMOUNT TO" })
             .setTimestamp();
 
-        await announceChannel.send({ embeds: [topMembersEmbed] });
+        await announceChannel.send({ content: "<@&1319685912229056592>", embeds: [topMembersEmbed] });
 
         // Construct failed quota list (if any)
         let failedQuotaEmbed;
