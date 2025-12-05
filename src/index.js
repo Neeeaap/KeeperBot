@@ -238,6 +238,9 @@ async function start() {
         await client.login(important.botToken);
         console.log(`Logged in as ${client.user.tag}`);
 
+        const channelToSend = client.channels.cache.get("1319688326709510317");
+        if (channelToSend) await channelToSend.send("feeling cute today");
+
        // require("./initDatabase").initDB(client);
        //await require("./helpers/reset").quotaReset(client);
     } catch(err) {

@@ -78,6 +78,12 @@ module.exports = {
             return;
         }
 
+        const isMember = member.roles.cache.has(important.memberId);
+        if (!isMember) {
+            interaction.editReply("Only Heartkeeper members are entitled to a profile");
+            return;
+        }
+
         try {
             let profile = await displayProfile(member);
             await interaction.editReply({ embeds: [ profile ] });

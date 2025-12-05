@@ -31,6 +31,7 @@ async function quotaReset(client) {
             try {
                 const member = await guild.members.fetch(user._id).catch(() => null);
                 if (!member) continue;
+                if (member.user.bot) continue;
 
                 const isStaff = member.roles.cache
                     .filter(r => r && r.id)
