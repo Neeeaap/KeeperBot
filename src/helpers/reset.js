@@ -120,7 +120,7 @@ async function quotaReset(client) {
             const pendingRemovalList = addStrikes.map((u, i) => `**${i + 1}.** <@${u.user.id}>`).join("\n");
             pendingRemovalEmbed = new EmbedBuilder()
                 .setColor([79, 14, 2])
-                .setTitle(":exclamation: PENDING REMOVAL")
+                .setTitle(":no_entry_sign: PENDING REMOVAL")
                 .setDescription(`The following members have failed to meet quota 3 times consecutively:\n${pendingRemovalList}`)
                 .setFooter({ text: "PLUCK OUT THINE EYES" })
                 .setTimestamp();

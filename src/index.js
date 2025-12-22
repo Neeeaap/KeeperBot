@@ -242,8 +242,8 @@ async function start() {
 
         const messageEmbed = new EmbedBuilder()
             .setColor([247, 239, 118])
-            .setTitle("No-Quota Week")
-            .setDescription("As mentioned in the last guild ceremony, everyone is immune from quota for the week.\nIf you have any guild strikes, you can still get them removed by hosting or attending 1 event.\n\nMerry Christmas and Happy New Year!");
+            .setTitle(":purple_heart: No-Quota Week :purple_heart:")
+            .setDescription("As mentioned in the last guild ceremony, everyone is immune from quota for the week. If you have any guild strikes, you can still get them removed by hosting or attending 1 event.\n\n**Merry Christmas, Happy New Year, and go TOUCH GRASS!!** :tada:");
 
         if (channelToSend) await channelToSend.send({ embeds: [messageEmbed] });
 
