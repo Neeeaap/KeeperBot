@@ -238,7 +238,7 @@ async function start() {
         await client.login(important.botToken);
         console.log(`Logged in as ${client.user.tag}`);
 
-        const channelToSend = await client.channels.fetch("1424080551609892934");
+        const channelToSend = await client.channels.fetch("1367163102898159667");
 
         const messageEmbed = new EmbedBuilder()
             .setColor([247, 239, 118])
