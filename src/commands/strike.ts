@@ -41,11 +41,8 @@ async function strike(members: GuildMember | GuildMember[], amount: number) {
                 if (newStrikes >= 3) {
                     return member;
                 }
-
-                return null;
             } catch(err) {
                 console.error(`Error while striking ${member.user.username} (${member.user.id}):`, err);
-                return null;
             }
         })
     );

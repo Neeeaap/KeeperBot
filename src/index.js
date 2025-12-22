@@ -1,4 +1,4 @@
-const { Client, Events, GatewayIntentBits, Collection } = require("discord.js");
+const { Client, Events, GatewayIntentBits, Collection, EmbedBuilder } = require("discord.js");
 const { sendError, sendSuccess } = require("./helpers/embeds");
 
 const Mongoose = require("mongoose");
@@ -238,10 +238,16 @@ async function start() {
         await client.login(important.botToken);
         console.log(`Logged in as ${client.user.tag}`);
 
-        const channelToSend = client.channels.cache.get("1319688326709510317");
-        if (channelToSend) await channelToSend.send("feeling cute today");
+        const channelToSend = await client.channels.fetch("1424080551609892934");
 
-       // require("./initDatabase").initDB(client);
+        const messageEmbed = new EmbedBuilder()
+            .setColor([247, 239, 118])
+            .setTitle("No-Quota Week")
+            .setDescription("As mentioned in the last guild ceremony, everyone is immune from quota for the week.\nIf you have any guild strikes, you can still get them removed by hosting or attending 1 event.\n\nMerry Christmas and Happy New Year!")
+
+        if (channelToSend) await channelToSend.send(messageEmbed);
+
+       //require("./initDatabase").initDB(client);
        //await require("./helpers/reset").quotaReset(client);
     } catch(err) {
         console.error("Failed to start:", err)
