@@ -49,7 +49,7 @@ async function quotaReset(client) {
                 const metQuota = isStaff ? (hasHosted || hasAttended) : hasAttended;
 
                 if (!metQuota && !isExcused) {
-                    /*const Reason = isStaff
+                    const Reason = isStaff
                         ? "did not host or attend any events"
                         : "did not attend any events";
 
@@ -58,7 +58,7 @@ async function quotaReset(client) {
                         reason: Reason
                     });
 
-                    membersToAddStrike.push(member);*/
+                    membersToAddStrike.push(member);
                 } else if (metQuota) {
                     membersToRemoveStrike.push(member);
                 }
