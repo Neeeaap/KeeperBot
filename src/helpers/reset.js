@@ -7,7 +7,7 @@ const important = require("../configs/constants");
 const userSchema =  require("../schemas/UserSchema");
 
 const STAFF_ROLES = ["1364898392689606667", "1425112155291648010"];
-const EXCUSED_ROLES = ["1364068742077743284", "1319685397697007677", "1319685026446704732", "1382354473942388800", "1319698133273284638", "1384722457360859307"];
+const EXCUSED_ROLES = ["1364068742077743284", "1319685397697007677", "1319685026446704732", "1382354473942388800", "1319698133273284638", "1376926923522969671"];
 
 const StrikeModule = require("../commands/strike");
 
@@ -90,7 +90,6 @@ async function quotaReset(client) {
                 { name: "Top Weekly Attendee", value: `The top attendee for this week goes to <@${topAttendees[0]._id}> with ${topAttendees[0].attended} events attended, followed by <@${topAttendees[1]._id}> with ${topAttendees[1].attended} attendees` }
             )
             .setFooter({ text: "A PALTRY OFFERING, BUT MORE THAN YOUR KIND USUALLY AMOUNT TO" })
-            .setTimestamp();
 
         await announceChannel.send({ content: "<@&1319685912229056592>", embeds: [topMembersEmbed] });
 
@@ -103,14 +102,12 @@ async function quotaReset(client) {
                 .setTitle(":warning: Failed Quota")
                 .setDescription(`The following members have been given a strike:\n${failedList}`)
                 .setFooter({ text: "PROVE YOURSELF AT LEAST AN APPETISER" })
-                .setTimestamp();
             console.log(`[WEEKLY CHECK]: ${failedQuota.length} members did not meet quota`);
         } else {
             failedQuotaEmbed = new EmbedBuilder()
                 .setColor([0, 255, 0])
                 .setTitle(":white_check_mark: Quota Complete")
                 .setDescription("Everyone completed their quota!")
-                .setTimestamp();
             console.log("[WEEKLY CHECK]: All members completed their quota this week");
         }
 
@@ -123,12 +120,10 @@ async function quotaReset(client) {
                 .setTitle(":no_entry_sign: PENDING REMOVAL")
                 .setDescription(`The following members have failed to meet quota 3 times consecutively:\n${pendingRemovalList}`)
                 .setFooter({ text: "PLUCK OUT THINE EYES" })
-                .setTimestamp();
         } else {
             pendingRemovalEmbed = new EmbedBuilder()
                 .setColor([0, 255, 0])
                 .setDescription(":white_check_mark: No members pending removal")
-                .setTimestamp();
         }
         
         // Display embeds
