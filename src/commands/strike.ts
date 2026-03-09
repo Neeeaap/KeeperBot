@@ -62,7 +62,7 @@ async function strike(members: GuildMember | GuildMember[], amount: number) {
 
 export = {
     cooldown: 5,
-    allowedRoles: ["1425112155291648010", "1364898392689606667", "1319685026446704732", "1319685397697007677"],
+    allowedRoles: ["1425112155291648010", "1364898392689606667", "1319685026446704732", "1319685397697007677", "1429540753687969802", "1477202410119102606", "1364068742077743284"],
     data: new SlashCommandBuilder()
         .setName("strike")
         .setDescription("Increment a specified member's strike count")
