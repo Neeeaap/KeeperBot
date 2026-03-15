@@ -232,8 +232,11 @@ if (!global.hasCronStarted) {
 
 async function start() {
     try {
-        await Mongoose.connect(important.mongoURI);
-        console.log("Connected to MongoDB");
+        await Mongoose.connect(important.mongoURI, {
+            family: 4
+        })
+        .then(() => console.log("Connected to MongoDB"))
+        .catch((err) => console.error("MongoDB Connection Error:", err));
 
         await client.login(important.botToken);
         console.log(`Logged in as ${client.user.tag}`);
